@@ -5,17 +5,21 @@
 import pygame as pg
 import display as dp
 import menu0
+import menuBrowser
 
 # LOAD MAIN MENU SIDEBAR BUTTONS/ CANVAS MOUSE ACTIONS
 BUTTONS = menu0.BUTTONS
 LMC = menu0.LMC
 RMC = menu0.RMC
-
+fileBrowser = 0
 # MAIN LOOP
 RUN = True
 while RUN:
     dp.SCREEN.fill(dp.BLACK)
-
+    if fileBrowser == 1:
+        BUTTONS = menuBrowser.BUTTONS
+    elif fileBrowser == 0:
+        BUTTONS = menu0.BUTTONS
     # DRAW SIDEBAR
     pg.draw.rect(dp.SCREEN, dp.PS1, (dp.WIDTH-dp.SIDEBAR_WIDTH, 0, dp.SIDEBAR_WIDTH, dp.HEIGHT))
     for button in BUTTONS:
@@ -45,8 +49,7 @@ while RUN:
             else:
                 for button in BUTTONS:
                     if button.rect.collidepoint(mouse_x, mouse_y):
-                        button.function()
-
+                        fileBrowser = button.function()
         if event.type == pg.QUIT:
             RUN = False
 
