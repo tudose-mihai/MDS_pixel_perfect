@@ -5,18 +5,73 @@
 import pygame as pg
 import display as dp
 import button as btn
-
+import os, copy 
 ##################ACTIVATE MAINMENU##################
 
 BUTTONS = []
-BUTTONS.append(btn.Button(710, 10, "MENU0", lambda: printmsg("MENU0")))
+BUTTONS.append(btn.Button(710, 10, "Browser", lambda: activateBrowser()))
 BUTTONS.append(btn.Button(805, 10, "Brush", lambda: activateBrush()))
 BUTTONS.append(btn.Button(710, 60, "MENU2", lambda: printmsg("MENU2")))
 BUTTONS.append(btn.Button(805, 60, "MENU3", lambda: printmsg("MENU3")))
 LMC = lambda: printmsg("LEFT MOUSE CLICK")
 RMC = lambda: printmsg("RIGHT MOUSE CLICK")
 
+##################ACTIVATE BROWSER##################
+page = 0
+path = os.getcwd()
+original_path = path
+files = os.listdir(path)
+def activateBrowser():
+    global BUTTONS, LMC, RMC
+    BUTTONS.clear()
+    files = os.listdir(path)
+    x, y = 710, 60
+    minIndex, maxIndex = 14*page, 14*(page+1)
+    for i in range(minIndex,min(len(files), maxIndex)):
+        BUTTONS.append(btn.Button(x, y, files[i], lambda x = files[i]: browserAction(x)))
+        if i % 2 == 0:
+            x = 805
+        else:
+            x, y = 710, y + 50
+    BUTTONS.append(btn.Button(710, 10, "PGUP", lambda: pageIncrement()))
+    BUTTONS.append(btn.Button(805, 10, "PGDOWN", lambda: pageDecrement()))
+    BUTTONS.append(btn.Button(710, 450, "BACK", lambda: browserUp()))
+    BUTTONS.append(btn.Button(805, 450, "RETURN", lambda: returnMain()))
+    LMC = lambda: printmsg("LEFT MOUSE CLICK")
+    RMC = lambda: printmsg("RIGHT MOUSE CLICK")
 
+def browserAction(name):
+    global path
+    imageExtensions = ['.png', '.jpg', '.jpeg', '.bmp']
+    if '.' in name:  # not a file
+        extension = name[name.rindex('.'):]
+        if extension in imageExtensions: # is an image
+            dp.BASE.blit(pg.image.load(name), (0, 0)) # load image
+    else:  # is a file
+        if path[-1] != '\\': # C: -> C:\
+            path += '\\'
+        path, page = path + name, 0
+    activateBrowser()
+
+def browserUp():
+    global path, files
+    path = path[:path.rindex("\\")]
+    files = os.listdir(path)
+    if path[-1] == ":":
+        path += '\\'
+    activateBrowser()
+
+def pageIncrement():
+    global page, files
+    if (page+1)*16 <= len(files):
+        page += 1
+        activateBrowser()
+
+def pageDecrement():
+    global page
+    if page > 0:
+        page -= 1
+        activateBrowser()
 ##################ACTIVATE BRUSH##################
 BRUSH_SIZE = 6
 BRUSH_COLOR = dp.WHITE
@@ -67,13 +122,12 @@ def drawBrush(size, color):
 def returnMain():
     global BUTTONS, LMC, RMC
     BUTTONS.clear()
-    BUTTONS.append(btn.Button(710, 10, "MENU0", lambda: printmsg("MENU0")))
+    BUTTONS.append(btn.Button(710, 10, "Browser", lambda: activateBrowser()))
     BUTTONS.append(btn.Button(805, 10, "Brush", lambda: activateBrush()))
     BUTTONS.append(btn.Button(710, 60, "MENU2", lambda: printmsg("MENU2")))
     BUTTONS.append(btn.Button(805, 60, "MENU3", lambda: printmsg("MENU3")))
     LMC = lambda: printmsg("LEFT MOUSE CLICK")
     RMC = lambda: printmsg("RIGHT MOUSE CLICK")
-
 
 def printmsg(message):
     """docstring"""
