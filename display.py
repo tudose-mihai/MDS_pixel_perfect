@@ -16,6 +16,11 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+VIOLET = (238, 130, 238)
+YELLOW = (255, 255, 0)
+ORANGE = (255, 165, 0)
+AQUA = (0, 255, 255)
+DARK_GREEN = (0, 128, 0)
 
 # PHOTOSHOP COLORS
 
@@ -37,5 +42,7 @@ WINDOW = pg.display.set_mode((int(WIDTH * SCALE), int(HEIGHT * SCALE)))
 
 BASE = pg.Surface([WIDTH-SIDEBAR_WIDTH, HEIGHT])
 BASE.blit(pg.image.load("default.png"), (0, 0))
+
+CHANGES = pg.Surface([WIDTH-SIDEBAR_WIDTH, HEIGHT], pg.SRCALPHA)
 #TODO CHANGES LAYER
 #TODO FILTER LAYER
