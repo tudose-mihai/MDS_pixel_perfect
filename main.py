@@ -4,22 +4,54 @@
 
 import pygame as pg
 import display as dp
-import menu0
-import menuBrowser
+import button as btn
 
-# LOAD MAIN MENU SIDEBAR BUTTONS/ CANVAS MOUSE ACTIONS
-BUTTONS = menu0.BUTTONS
-LMC = menu0.LMC
-RMC = menu0.RMC
-fileBrowser = 0
-# MAIN LOOP
+##################ACTIVATE MAINMENU##################
+
+BUTTONS = []
+BUTTONS.append(btn.Button(710, 10, "MENU0", lambda: printmsg("MENU0")))
+BUTTONS.append(btn.Button(805, 10, "Brush", lambda: activateBrush()))
+BUTTONS.append(btn.Button(710, 60, "MENU2", lambda: printmsg("MENU2")))
+BUTTONS.append(btn.Button(805, 60, "MENU3", lambda: printmsg("MENU3")))
+LMC = lambda: printmsg("LEFT MOUSE CLICK")
+RMC = lambda: printmsg("RIGHT MOUSE CLICK")
+
+##################ACTIVATE BRUSH##################
+
+def activateBrush():
+    global BUTTONS, LMC, RMC
+    BUTTONS.clear()
+    BUTTONS.append(btn.Button(710, 10, "BRUSH0", lambda: printmsg("BRUSH0")))
+    BUTTONS.append(btn.Button(805, 10, "BRUSH1", lambda: printmsg("BRUSH1")))
+    BUTTONS.append(btn.Button(710, 60, "BRUSH2", lambda: printmsg("BRUSH2")))
+    BUTTONS.append(btn.Button(805, 60, "RETURN", lambda: returnMain()))
+    LMC = lambda: printmsg("LEFT BRUSH CLICK")
+    RMC = lambda: printmsg("RIGHT BRUSH CLICK")
+
+# TODO Brush functions
+
+####################################
+
+def returnMain():
+    global BUTTONS, LMC, RMC
+    BUTTONS.clear()
+    BUTTONS.append(btn.Button(710, 10, "MENU0", lambda: printmsg("MENU0")))
+    BUTTONS.append(btn.Button(805, 10, "Brush", lambda: activateBrush()))
+    BUTTONS.append(btn.Button(710, 60, "MENU2", lambda: printmsg("MENU2")))
+    BUTTONS.append(btn.Button(805, 60, "MENU3", lambda: printmsg("MENU3")))
+    LMC = lambda: printmsg("LEFT MOUSE CLICK")
+    RMC = lambda: printmsg("RIGHT MOUSE CLICK")
+
+def printmsg(message):
+    """docstring"""
+    print(message)
+
+##################MAINLOOP##################
+
 RUN = True
 while RUN:
     dp.SCREEN.fill(dp.BLACK)
-    if fileBrowser == 1:
-        BUTTONS = menuBrowser.BUTTONS
-    elif fileBrowser == 0:
-        BUTTONS = menu0.BUTTONS
+
     # DRAW SIDEBAR
     pg.draw.rect(dp.SCREEN, dp.PS1, (dp.WIDTH-dp.SIDEBAR_WIDTH, 0, dp.SIDEBAR_WIDTH, dp.HEIGHT))
     for button in BUTTONS:
@@ -49,7 +81,8 @@ while RUN:
             else:
                 for button in BUTTONS:
                     if button.rect.collidepoint(mouse_x, mouse_y):
-                        fileBrowser = button.function()
+                        button.function()
+
         if event.type == pg.QUIT:
             RUN = False
 
