@@ -8,4 +8,4 @@ We have tracker our backlog using Trello.
 ## 3. Features list
 - Opening an image from the local machine
 - Loading a blank canvas
-- Edit image using various tools
+- Draw lines using brushes
