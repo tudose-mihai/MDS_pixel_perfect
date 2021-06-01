@@ -3,7 +3,7 @@
 - As .., I want to ..
 
 ## 2. Backlog creation
-We have tracker our backlog using Trello.
+We have tracked our backlog using [Trello](https://trello.com/b/ktHg5U4R/project-backlog).
 
 ## 3. Features list
 - Opening an image from the local machine
