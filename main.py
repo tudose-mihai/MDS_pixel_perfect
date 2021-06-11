@@ -5,16 +5,17 @@
 import pygame as pg
 import display as dp
 import button as btn
-import os, copy 
+import os, copy, time, math
 ##################ACTIVATE MAINMENU##################
 
 BUTTONS = []
 BUTTONS.append(btn.Button(710, 10, "Browser", lambda: activateBrowser()))
 BUTTONS.append(btn.Button(805, 10, "Brush", lambda: activateBrush()))
-BUTTONS.append(btn.Button(710, 60, "MENU2", lambda: printmsg("MENU2")))
+BUTTONS.append(btn.Button(710, 60, "Polygons", lambda: activatePolygonBrush()))
 BUTTONS.append(btn.Button(805, 60, "MENU3", lambda: printmsg("MENU3")))
 LMC = lambda: printmsg("LEFT MOUSE CLICK")
 RMC = lambda: printmsg("RIGHT MOUSE CLICK")
+LMC_RELEASE = lambda: print('mainnn')
 
 ##################ACTIVATE BROWSER##################
 page = 0
@@ -72,6 +73,98 @@ def pageDecrement():
     if page > 0:
         page -= 1
         activateBrowser()
+
+##################ACTIVATE POLYGON BRUSH##################
+POLYGON_EDGE_SIZE = 6
+POLYGON_EDGE_COLOR = dp.WHITE
+POLYGON_SHAPE = "Square"
+POLYGON_POS = None
+
+def activatePolygonBrush():
+    global BUTTONS, LMC, RMC, LMC_RELEASE
+
+    BUTTONS.clear()
+    BUTTONS.append(btn.Button(710, 10, "SIZE+", lambda: changePolygonEdgeSize(2)))
+    BUTTONS.append(btn.Button(805, 10, "SIZE-", lambda: changePolygonEdgeSize(-2)))
+
+    BUTTONS.append(btn.Button(710, 60, "", lambda: changePolygonEdgeColor(dp.WHITE), color=dp.WHITE))
+    BUTTONS.append(btn.Button(805, 60, "", lambda: changePolygonEdgeColor(dp.BLACK), color=dp.BLACK))
+    BUTTONS.append(btn.Button(710, 110, "", lambda: changePolygonEdgeColor(dp.RED), color=dp.RED))
+    BUTTONS.append(btn.Button(805, 110, "", lambda: changePolygonEdgeColor(dp.GREEN), color=dp.GREEN))
+    BUTTONS.append(btn.Button(710, 160, "", lambda: changePolygonEdgeColor(dp.BLUE), color=dp.BLUE))
+    BUTTONS.append(btn.Button(805, 160, "", lambda: changePolygonEdgeColor(dp.VIOLET), color=dp.VIOLET))
+    BUTTONS.append(btn.Button(710, 210, "", lambda: changePolygonEdgeColor(dp.YELLOW), color=dp.YELLOW))
+    BUTTONS.append(btn.Button(805, 210, "", lambda: changePolygonEdgeColor(dp.ORANGE), color=dp.ORANGE))
+    BUTTONS.append(btn.Button(710, 260, "", lambda: changePolygonEdgeColor(dp.AQUA), color=dp.AQUA))
+    BUTTONS.append(btn.Button(805, 260, "", lambda: changePolygonEdgeColor(dp.DARK_GREEN), color=dp.DARK_GREEN))
+
+    BUTTONS.append(btn.Button(710, 310, "Square", lambda: changePolygonShape("Square")))
+    BUTTONS.append(btn.Button(805, 310, "Rectangle", lambda: changePolygonShape("Rectangle")))
+    BUTTONS.append(btn.Button(710, 360, "Circle", lambda: changePolygonShape("Circle")))
+    BUTTONS.append(btn.Button(805, 360, "Oval", lambda: changePolygonShape("Oval")))
+
+    BUTTONS.append(btn.Button(710, 450, "CLEAR", lambda: clearChanges()))
+    BUTTONS.append(btn.Button(805, 450, "RETURN", lambda: returnMain()))
+    LMC_RELEASE = lambda: drawPolygon(POLYGON_EDGE_SIZE, POLYGON_EDGE_COLOR, POLYGON_SHAPE)
+    LMC         = lambda: previewPolygon(POLYGON_EDGE_SIZE, POLYGON_EDGE_COLOR, POLYGON_SHAPE)
+    RMC         = lambda: print("RMC polygon")
+
+def changePolygonShape(x):
+    global POLYGON_SHAPE
+    POLYGON_SHAPE = x
+
+def changePolygonEdgeColor(x):
+    global POLYGON_EDGE_COLOR
+    POLYGON_EDGE_COLOR = x
+
+def changePolygonEdgeSize(x):
+    global POLYGON_EDGE_SIZE
+    if POLYGON_EDGE_SIZE == 2 and x < 0:
+        POLYGON_EDGE_SIZE = 2
+    else:
+        POLYGON_EDGE_SIZE = POLYGON_EDGE_SIZE + x
+
+def clearPolygonChanges():
+    dp.PREVIEW = pg.Surface([dp.WIDTH-dp.SIDEBAR_WIDTH, dp.HEIGHT], pg.SRCALPHA)
+
+def previewPolygon(size, color, shape):
+    global POLYGON_CLICK, POLYGON_POS
+    if POLYGON_POS is None:
+        POLYGON_POS = (mouse_x, mouse_y)
+    else:
+        init_x, init_y = POLYGON_POS
+        dp.PREVIEW = pg.Surface([dp.WIDTH-dp.SIDEBAR_WIDTH, dp.HEIGHT], pg.SRCALPHA)
+        if shape == "Rectangle":
+            pg.draw.rect(dp.PREVIEW, color, (init_x, init_y, mouse_x - init_x, mouse_y - init_y), size)
+        elif shape == "Square":
+            x_offset, y_offset = mouse_x - init_x, mouse_y - init_y
+            x_offset, y_offset = min(x_offset, y_offset), min(x_offset, y_offset)
+            pg.draw.rect(dp.PREVIEW, color, (init_x, init_y, x_offset, y_offset), size)
+        elif shape == "Circle":
+            pg.draw.circle(dp.PREVIEW, color, (init_x, init_y), math.dist((mouse_x,mouse_y),(init_x, init_y)), size)
+        elif shape == "Oval":
+            pg.draw.ellipse(dp.PREVIEW, color, (init_x, init_y, mouse_x - init_x, mouse_y - init_y), size)
+
+def drawPolygon(size, color, shape):
+    global POLYGON_CLICK, POLYGON_POS
+    if POLYGON_POS is not None:
+        init_x, init_y = POLYGON_POS
+        if shape == "Rectangle":
+            dp.PREVIEW = pg.Surface([dp.WIDTH-dp.SIDEBAR_WIDTH, dp.HEIGHT], pg.SRCALPHA)
+            pg.draw.rect(dp.CHANGES, color, (init_x, init_y, mouse_x - init_x, mouse_y - init_y), size)
+        elif shape == "Square":
+            x_offset, y_offset = mouse_x - init_x, mouse_y - init_y
+            x_offset, y_offset = min(x_offset, y_offset), min(x_offset, y_offset)
+            dp.PREVIEW = pg.Surface([dp.WIDTH - dp.SIDEBAR_WIDTH, dp.HEIGHT], pg.SRCALPHA)
+            pg.draw.rect(dp.CHANGES, color, (init_x, init_y, x_offset, y_offset), size)
+        elif shape == "Circle":
+            dp.PREVIEW = pg.Surface([dp.WIDTH - dp.SIDEBAR_WIDTH, dp.HEIGHT], pg.SRCALPHA)
+            pg.draw.circle(dp.CHANGES, color, (init_x, init_y), math.dist((mouse_x,mouse_y),(init_x, init_y)), size)
+        elif shape == "Oval":
+            dp.PREVIEW = pg.Surface([dp.WIDTH-dp.SIDEBAR_WIDTH, dp.HEIGHT], pg.SRCALPHA)
+            pg.draw.ellipse(dp.CHANGES, color, (init_x, init_y, mouse_x - init_x, mouse_y - init_y), size)
+        POLYGON_POS = None
+
 ##################ACTIVATE BRUSH##################
 BRUSH_SIZE = 6
 BRUSH_COLOR = dp.WHITE
@@ -124,7 +217,7 @@ def returnMain():
     BUTTONS.clear()
     BUTTONS.append(btn.Button(710, 10, "Browser", lambda: activateBrowser()))
     BUTTONS.append(btn.Button(805, 10, "Brush", lambda: activateBrush()))
-    BUTTONS.append(btn.Button(710, 60, "MENU2", lambda: printmsg("MENU2")))
+    BUTTONS.append(btn.Button(710, 60, "Polygons", lambda: activatePolygonBrush()))
     BUTTONS.append(btn.Button(805, 60, "MENU3", lambda: printmsg("MENU3")))
     LMC = lambda: printmsg("LEFT MOUSE CLICK")
     RMC = lambda: printmsg("RIGHT MOUSE CLICK")
@@ -150,6 +243,7 @@ while RUN:
     # DRAW CANVAS
     dp.SCREEN.blit(dp.BASE, (0, 0))
     dp.SCREEN.blit(dp.CHANGES, (0, 0))
+    dp.SCREEN.blit(dp.PREVIEW, (0, 0))
 
     # UPDATE
     pg.transform.scale(dp.SCREEN, (int(dp.WIDTH * dp.SCALE), int(dp.HEIGHT * dp.SCALE)), dp.WINDOW)
@@ -167,6 +261,7 @@ while RUN:
                 RMC_IS_PRESSED = True
         elif event.type == pg.MOUSEBUTTONUP:
             if event.button == 1:
+                LMC_RELEASE()
                 LMC_IS_PRESSED = False
             elif event.button == 3:
                 RMC_IS_PRESSED = False
@@ -175,7 +270,6 @@ while RUN:
             # CLICK CANVAS
             if LMC_IS_PRESSED:
                 LMC()
-
             if RMC_IS_PRESSED:
                 RMC()
 
