@@ -185,10 +185,11 @@ def activateBrush():
     BUTTONS.append(btn.Button(805, 210, "", lambda: changeColor(dp.ORANGE), color=dp.ORANGE))
     BUTTONS.append(btn.Button(710, 260, "", lambda: changeColor(dp.AQUA), color=dp.AQUA))
     BUTTONS.append(btn.Button(805, 260, "", lambda: changeColor(dp.DARK_GREEN), color=dp.DARK_GREEN))
-    BUTTONS.append(btn.Button(710, 310, "CLEAR", lambda: clearChanges()))
+    BUTTONS.append(btn.Button(710, 310, "ERASER", lambda: changeColor(dp.ERASER)))
+    BUTTONS.append(btn.Button(805, 310, "CLEAR", lambda: clearChanges()))
     BUTTONS.append(btn.Button(805, 450, "RETURN", lambda: returnMain()))
     LMC = lambda: drawBrush(BRUSH_SIZE, BRUSH_COLOR)
-    RMC = lambda: printmsg("RIGHT BRUSH CLICK")
+    RMC = lambda: drawBrush(BRUSH_SIZE + 8, dp.ERASER)
 
 def changeColor(x):
     global BRUSH_COLOR
