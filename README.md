@@ -19,5 +19,7 @@ We have tracked our backlog using [Trello](https://trello.com/b/ktHg5U4R/project
 
 ## 3. Features list
 - Opening an image from the local machine
-- Loading a blank canvas
+- Revert changes to image
 - Draw lines using brushes
+- Eraser brush
+- Draw polygons
