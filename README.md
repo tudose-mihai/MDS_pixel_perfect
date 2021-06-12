@@ -1,3 +1,8 @@
+Proiect realizat de:
+- Berbescu Radu Eduard (grupa 233)
+- Postole Andrei Laurentiu (grupa 233)
+- Tudose Mihai (grupa 233)
+
 ## 1. User stories
 - As a user, I want to be able to view photos.
 - As a photographer, I want to be able to retouch photos.
